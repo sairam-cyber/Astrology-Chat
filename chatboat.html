@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astrology Multi-Step UI</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="overlay" id="overlay">
+        <div class="auth-container glass" id="auth-container">
+            <img src="image/logo.png" class="logo" alt="Logo" id="logo-img">
+            <div class="welcome" id="welcome-text">Welcome Back!</div>
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                    <span class="toggle-password" onclick="togglePassword('login-password', this)">
+                        <i class="fa-regular fa-eye"></i>
+                    </span>
+                </div>
+                <button class="btn" type="submit">Login</button>
+                <button class="btn google-btn" type="button" onclick="handleGoogleLogin()">
+                    <i class="fa-brands fa-google"></i> Sign in with Google
+                </button>
+            </form>
+            <div class="switch-link" id="show-signup">Don't have an account? Sign up</div>
+            <form id="signup-form" style="display:none;">
+                <div class="step-indicator" id="signup-steps">
+                    <div class="step active" data-step="1">1</div>
+                    <div class="step" data-step="2">2</div>
+                    <div class="step" data-step="3">3</div>
+                </div>
+                <div class="signup-step" id="signup-step-1">
+                    <div class="input-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-mobile">Mobile Number</label>
+                        <input type="tel" id="signup-mobile" required pattern="[0-9]{10}">
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" required>
+                        <span class="toggle-password" onclick="togglePassword('signup-password', this)">
+                            <i class="fa-regular fa-eye"></i>
+                        </span>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" required>
+                        <span class="toggle-password" onclick="togglePassword('signup-confirm-password', this)">
+                            <i class="fa-regular fa-eye"></i>
+                        </span>
+                    </div>
+                    <button class="btn" type="button" onclick="nextSignupStep(1)">Next</button>
+                    <button class="btn google-btn" type="button" onclick="handleGoogleSignup()">
+                        <i class="fa-brands fa-google"></i> Sign up with Google
+                    </button>
+                </div>
+                <div class="signup-step" id="signup-step-2" style="display:none;">
+                    <div class="input-group gender-select">
+                        <label>Gender</label>
+                        <div class="gender-options" id="gender-options">
+                            <div class="gender-option" id="gender-male" data-value="male"
+                                onclick="selectGender('male')">Male</div>
+                            <div class="gender-option" id="gender-female" data-value="female"
+                                onclick="selectGender('female')">Female</div>
+                            <div class="gender-option" id="gender-other" data-value="other"
+                                onclick="selectGender('other')">Other</div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-dob">Date of Birth</label>
+                        <input type="date" id="signup-dob" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-tob">Time of Birth</label>
+                        <input type="time" id="signup-tob" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-location">Location of Birth</label>
+                        <input type="text" id="signup-location" required>
+                    </div>
+                    <button class="btn back-btn" type="button" onclick="prevSignupStep(2)">Back</button>
+                    <button class="btn" type="button" onclick="nextSignupStep(2)">Next</button>
+                </div>
+                <div class="signup-step" id="signup-step-3" style="display:none;">
+                    <div class="zodiac-section">
+                        <button class="toggle-zodiac" type="button" onclick="toggleZodiacList()">
+                            <i class="fa-regular fa-eye"></i> Toggle Zodiac Symbols
+                        </button>
+                        <div class="zodiac-list" id="zodiac-list">
+                        </div>
+                    </div>
+                    <button class="btn back-btn" type="button" onclick="prevSignupStep(3)">Back</button>
+                    <button class="btn" type="submit">Sign Up</button>
+                </div>
+            </form>
+            <div class="switch-link" id="show-login" style="display:none;">Already have an account? Login</div>
+        </div>
+    </div>
+
+    <div id="edit-profile-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Edit Profile</div>
+            <div class="input-group">
+                <label for="edit-name">Full Name</label>
+                <input type="text" id="edit-name">
+            </div>
+            <div class="input-group">
+                <label for="edit-dob">Date of Birth</label>
+                <input type="date" id="edit-dob">
+            </div>
+            <div class="input-group">
+                <label for="edit-tob">Time of Birth</label>
+                <input type="time" id="edit-tob">
+            </div>
+            <div class="input-group">
+                <label for="edit-profile-pic">Profile Photo</label>
+                <input type="file" id="edit-profile-pic" accept="image/*">
+            </div>
+            <div class="input-group">
+                <label for="edit-zodiac">Zodiac Sign</label>
+                <select id="edit-zodiac">
+                    <option value="Aries">Aries</option>
+                    <option value="Taurus">Taurus</option>
+                    <option value="Gemini">Gemini</option>
+                    <option value="Cancer">Cancer</option>
+                    <option value="Leo">Leo</option>
+                    <option value="Virgo">Virgo</option>
+                    <option value="Libra">Libra</option>
+                    <option value="Scorpio">Scorpio</option>
+                    <option value="Sagittarius">Sagittarius</option>
+                    <option value="Capricorn">Capricorn</option>
+                    <option value="Aquarius">Aquarius</option>
+                    <option value="Pisces">Pisces</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn" onclick="saveProfile()">Save Changes</button>
+                <button class="btn back-btn" onclick="cancelEdit()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-history-panel" id="chat-history-panel">
+        <button class="close-history-btn" onclick="toggleChatHistory()"><i class="fa-solid fa-xmark"></i></button>
+        <div class="history-header"><i class="fa-solid fa-clock-rotate-left"></i> Chat History</div>
+        <ul class="history-list" id="history-list">
+        </ul>
+    </div>
+
+    <div class="main-layout" id="main-layout" style="display:none;">
+        <div class="side-logo glass">
+            <img src="image/logo.png" alt="Logo">
+        </div>
+        <div class="main-content">
+            <div class="hamburger-menu" onclick="toggleChatHistory()"><i class="fa-solid fa-bars"></i></div>
+
+            <div class="profile-section">
+                <img src="image/logo.png" class="profile-pic" id="profile-pic" alt="Profile">
+                <div class="profile-menu" id="profile-menu">
+                    <button id="edit-profile-btn" onclick="editProfile()">
+                        Edit Profile <i class="fa-solid fa-user-pen"></i>
+                    </button>
+                    <button id="logout-btn" onclick="logout()">
+                        Logout <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="profile-box" id="dashboard-profile-box">
+                <img class="profile-avatar" id="db-avatar" src="image/logo.png" />
+                <div class="profile-details">
+                    <div class="name" id="db-name">Astro User</div>
+                    <div class="zodiac" id="db-zodiac">Zodiac: <span id="db-zodiac-sign">—</span></div>
+                    <div class="dob" id="db-dob">DOB: <span id="db-dob-val">—</span></div>
+                </div>
+            </div>
+            <div class="chat-box" id="astrology-chat-box">
+                <div class="ask-label"><i class="fa-regular fa-comment-dots"></i> Astrology Chat</div>
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="suggested-prompts" id="suggested-prompts">
+                    <button type="button" class="prompt-chip">What does the week hold for Libra?</button>
+                    <button type="button" class="prompt-chip">When is my lucky day?</button>
+                    <button type="button" class="prompt-chip">Tell me about my career</button>
+                    <button type="button" class="prompt-chip">Who will I marry?</button>
+                </div>
+                <div class="ask-input-group">
+                    <input type="text" placeholder="Type your astrology question..." id="ask-input">
+                    <button id="ask-send-btn" type="button"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
